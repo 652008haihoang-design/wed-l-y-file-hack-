@@ -1,0 +1,393 @@
+# wed-l-y-file-hack-
+HACKFF
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cửa Hàng Phần Mềm & Kích Hoạt File</title>
+  <style>
+    :root {
+      --bg: #0f172a; --card: #1e293b; --border: #334155;
+      --primary: #3b82f6; --primary-hover: #2563eb;
+      --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+      --text: #f8fafc; --muted: #94a3b8;
+    }
+    * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { margin: 0; background: var(--bg); color: var(--text); line-height: 1.6; }
+    header {
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 15px 5%; display: flex; justify-content: space-between; align-items: center;
+      position: sticky; top: 0; z-index: 100;
+    }
+    header h1 { margin: 0; font-size: 1.25rem; color: var(--primary); }
+    .nav-btns button {
+      background: transparent; border: 1px solid var(--border); color: var(--text);
+      padding: 8px 14px; border-radius: 6px; cursor: pointer; margin-left: 8px;
+    }
+    .nav-btns button.active { background: var(--primary); border-color: var(--primary); }
+    .container { max-width: 1100px; margin: 30px auto; padding: 0 20px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 20px; display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .btn {
+      background: var(--primary); color: #fff; border: none; padding: 10px 16px;
+      border-radius: 6px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 10px;
+    }
+    .btn:hover { background: var(--primary-hover); }
+    .btn-success { background: var(--success); }
+    .btn-danger { background: var(--danger); width: auto; padding: 6px 12px; font-size: 0.85rem; }
+    input, textarea {
+      width: 100%; padding: 10px; margin: 6px 0 15px; background: #0f172a;
+      border: 1px solid var(--border); border-radius: 6px; color: #fff;
+    }
+    .hidden { display: none !important; }
+    .modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.8);
+      display: flex; align-items: center; justify-content: center; padding: 20px; z-index: 200;
+    }
+    .modal-content {
+      background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+      max-width: 620px; width: 100%; padding: 25px; max-height: 90vh; overflow-y: auto;
+    }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
+    .close-btn { background: none; border: none; color: var(--muted); font-size: 1.5rem; cursor: pointer; }
+    .video-box iframe, .video-box video { width: 100%; height: 280px; border-radius: 8px; border: none; background: #000; }
+    .guide-box { background: #0f172a; padding: 15px; border-radius: 8px; border: 1px solid var(--border); white-space: pre-line; font-size: 0.9rem; margin: 12px 0; }
+    .unlock-area { background: rgba(59, 130, 246, 0.08); border: 1px dashed var(--primary); padding: 15px; border-radius: 8px; margin-top: 15px; }
+    .status-msg { font-size: 0.9rem; margin-top: 10px; font-weight: 500; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border-bottom: 1px solid var(--border); padding: 10px; text-align: left; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>DIGITAL FILE STORE</h1>
+  <div class="nav-btns">
+    <button id="btnTabShop" class="active" onclick="switchTab('shop')">Danh Sách File</button>
+    <button id="btnTabAdmin" onclick="switchTab('admin')">Quản Lý Sản Phẩm</button>
+  </div>
+</header>
+
+<div class="container">
+  <!-- TAB KHÁCH HÀNG -->
+  <div id="tabShop">
+    <h2>Chọn Gói File & Hướng Dẫn Cài Đặt</h2>
+    <div id="productList" class="grid">
+      <p style="color: var(--muted)">Đang đồng bộ danh sách file từ đám mây...</p>
+    </div>
+  </div>
+
+  <!-- TAB CHỦ SHOP THÊM FILE / VIDEO / CÁCH CÀI -->
+  <div id="tabAdmin" class="hidden">
+    <div id="adminLoginBox" class="card" style="max-width: 400px; margin: 40px auto;">
+      <h3>Đăng Nhập Chủ Shop</h3>
+      <input type="password" id="adminPassInput" placeholder="Nhập mật khẩu chủ shop...">
+      <button class="btn" onclick="loginAdmin()">Đăng Nhập</button>
+    </div>
+
+    <div id="adminDashboard" class="hidden">
+      <div class="card" style="margin-bottom: 25px;">
+        <h3>Thêm File Mới Lên Shop</h3>
+        <label>Tên gói file:</label>
+        <input type="text" id="prodName" placeholder="VD: Gói Tool Pro v3.0">
+        
+        <label>Mô tả ngắn:</label>
+        <input type="text" id="prodDesc" placeholder="Mô tả tính năng...">
+        
+        <label>Link tải file (Google Drive, MediaFire, GitHub...):</label>
+        <input type="url" id="prodFileUrl" placeholder="https://...">
+        
+        <label>Link Video hướng dẫn (YouTube hoặc file .mp4):</label>
+        <input type="url" id="prodVideoUrl" placeholder="https://www.youtube.com/watch?v=...">
+        
+        <label>Hướng dẫn cài đặt chi tiết:</label>
+        <textarea id="prodGuide" rows="4" placeholder="Bước 1: ...&#10;Bước 2: ..."></textarea>
+        
+        <button class="btn btn-success" onclick="addProduct()">+ Đăng Lên Cửa Hàng</button>
+      </div>
+
+      <div class="card">
+        <h3>Danh Sách File Đang Bán</h3>
+        <div id="adminProductTable"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL CHI TIẾT & NHẬP KEY -->
+<div id="productModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modalTitle" style="margin:0;">Tên gói</h3>
+      <button class="close-btn" onclick="closeModal()">&times;</button>
+    </div>
+
+    <div id="modalVideoContainer" class="video-box"></div>
+
+    <h4>Hướng dẫn cài đặt:</h4>
+    <div id="modalGuide" class="guide-box"></div>
+
+    <div class="unlock-area">
+      <h4 style="margin-top:0;">Nhập Key Để Lấy Link Tải File</h4>
+      <p style="font-size: 0.85rem; color: var(--muted); margin-bottom: 10px;">
+        • <strong>Key 1 lần:</strong> Mở khóa 1 lần duy nhất cho file này.<br>
+        • <strong>Key ngày:</strong> Kích hoạt theo số ngày cho file này (có thể nhập lại để tải bản cập nhật khi còn hạn).
+      </p>
+      <div id="keyInputSection">
+        <input type="text" id="customerKeyInput" placeholder="Nhập mã Key (VD: VIP-XXXX-XXXX)...">
+        <button class="btn" id="btnVerifyKey" onclick="verifyAndUnlock()">Xác Nhận Key & Mở Khóa</button>
+      </div>
+      <div id="keyStatusMsg" class="status-msg"></div>
+
+      <div id="unlockedDownloadBox" class="hidden" style="margin-top: 15px;">
+        <a id="finalDownloadLink" href="#" target="_blank" class="btn btn-success" style="display:block; text-align:center; text-decoration:none;">
+          TẢI FILE XUỐNG NGAY
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+<script>
+  // CẤU HÌNH FIREBASE DÙNG CHUNG VỚI FILE QUẢN LÝ KEY
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT",
+    storageBucket: "YOUR_PROJECT.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+
+  const ADMIN_PASSWORD = "admin123";
+  let currentProductId = null;
+  let productsCache = {};
+
+  function switchTab(tab) {
+    document.getElementById('tabShop').classList.toggle('hidden', tab !== 'shop');
+    document.getElementById('tabAdmin').classList.toggle('hidden', tab !== 'admin');
+    document.getElementById('btnTabShop').classList.toggle('active', tab === 'shop');
+    document.getElementById('btnTabAdmin').classList.toggle('active', tab === 'admin');
+  }
+
+  function loginAdmin() {
+    if (document.getElementById('adminPassInput').value === ADMIN_PASSWORD) {
+      document.getElementById('adminLoginBox').classList.add('hidden');
+      document.getElementById('adminDashboard').classList.remove('hidden');
+    } else {
+      alert("Sai mật khẩu!");
+    }
+  }
+
+  db.ref('products').on('value', (snap) => {
+    productsCache = snap.val() || {};
+    renderShopProducts();
+    renderAdminProducts();
+  });
+
+  function renderShopProducts() {
+    const container = document.getElementById('productList');
+    container.innerHTML = '';
+    const keys = Object.keys(productsCache);
+    if (keys.length === 0) {
+      container.innerHTML = '<p style="color:var(--muted)">Chưa có file nào được đăng.</p>';
+      return;
+    }
+    keys.forEach(id => {
+      const item = productsCache[id];
+      const card = document.createElement('div');
+      card.className = 'card';
+      card.innerHTML = `
+        <div>
+          <h3 style="margin-top:0;">${escapeHtml(item.name)}</h3>
+          <p style="color:var(--muted); font-size:0.95rem;">${escapeHtml(item.desc || '')}</p>
+        </div>
+        <button class="btn" onclick="openProductModal('${id}')">Xem Video & Lấy File</button>
+      `;
+      container.appendChild(card);
+    });
+  }
+
+  function formatVideoEmbed(url) {
+    if (!url) return '<p style="color:var(--muted)">Không có video hướng dẫn.</p>';
+    const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?/]+)/);
+    if (ytMatch && ytMatch[1]) {
+      return `<iframe src="https://www.youtube.com/embed/${ytMatch[1]}" allowfullscreen></iframe>`;
+    }
+    return `<video controls src="${escapeHtml(url)}"></video>`;
+  }
+
+  function openProductModal(id) {
+    currentProductId = id;
+    const item = productsCache[id];
+    document.getElementById('modalTitle').innerText = item.name;
+    document.getElementById('modalVideoContainer').innerHTML = formatVideoEmbed(item.videoUrl);
+    document.getElementById('modalGuide').innerText = item.guide || 'Chưa có hướng dẫn.';
+    
+    document.getElementById('customerKeyInput').value = '';
+    document.getElementById('keyStatusMsg').innerText = '';
+    document.getElementById('keyInputSection').classList.remove('hidden');
+    document.getElementById('unlockedDownloadBox').classList.add('hidden');
+    document.getElementById('productModal').classList.remove('hidden');
+  }
+
+  function closeModal() {
+    document.getElementById('productModal').classList.add('hidden');
+    document.getElementById('modalVideoContainer').innerHTML = '';
+    currentProductId = null;
+  }
+
+  // XỬ LÝ XÁC THỰC CẢ KEY 1 LẦN VÀ KEY NGÀY
+  async function verifyAndUnlock() {
+    const rawKey = document.getElementById('customerKeyInput').value.trim().toUpperCase();
+    const statusEl = document.getElementById('keyStatusMsg');
+    const btn = document.getElementById('btnVerifyKey');
+
+    if (!rawKey || /[.#$\[\]]/.test(rawKey)) {
+      statusEl.style.color = 'var(--danger)';
+      statusEl.innerText = 'Vui lòng nhập mã Key hợp lệ!';
+      return;
+    }
+
+    btn.disabled = true;
+    statusEl.style.color = 'var(--muted)';
+    statusEl.innerText = 'Đang đồng bộ kiểm tra Key trên đám mây...';
+
+    const keyRef = db.ref('keys/' + rawKey);
+    const product = productsCache[currentProductId];
+    const now = Date.now();
+    let rejectReason = '';
+    let successMsg = '';
+
+    try {
+      const result = await keyRef.transaction((data) => {
+        if (data === null) {
+          rejectReason = 'Mã Key không tồn tại trên hệ thống!';
+          return; // Hủy transaction
+        }
+
+        // TRƯỜNG HỢP 1: KEY DÙNG 1 LẦN
+        if (data.type === 'one_time' || !data.type) {
+          if (data.used === true) {
+            rejectReason = `Key 1 lần này đã được dùng cho gói "${data.boundProductName || 'Khác'}" và không thể dùng lại!`;
+            return;
+          }
+          successMsg = 'Kích hoạt Key 1 lần thành công! Key này đã được khóa sau khi mở file.';
+          return {
+            ...data,
+            used: true,
+            activatedAt: now,
+            boundProductId: currentProductId,
+            boundProductName: product.name
+          };
+        }
+
+        // TRƯỜNG HỢP 2: KEY THEO NGÀY
+        if (data.type === 'daily') {
+          // Lần đầu tiên khách nhập key -> Bắt đầu tính giờ & gắn với file này
+          if (!data.activatedAt) {
+            const expiresAt = now + (data.durationDays * 24 * 60 * 60 * 1000);
+            successMsg = `Kích hoạt thành công gói ${data.durationDays} ngày! Hết hạn lúc: ${new Date(expiresAt).toLocaleString('vi-VN')}`;
+            return {
+              ...data,
+              used: true,
+              activatedAt: now,
+              expiresAt: expiresAt,
+              boundProductId: currentProductId,
+              boundProductName: product.name
+            };
+          }
+
+          // Key đã kích hoạt trước đó -> Kiểm tra đúng file và còn hạn không
+          if (data.boundProductId && data.boundProductId !== currentProductId) {
+            rejectReason = `Key này chỉ dành riêng cho gói "${data.boundProductName}", không dùng được cho file này!`;
+            return;
+          }
+
+          if (now >= data.expiresAt) {
+            rejectReason = `Key ngày của bạn đã hết hạn lúc ${new Date(data.expiresAt).toLocaleString('vi-VN')}!`;
+            return;
+          }
+
+          successMsg = `Key ngày hợp lệ! Còn hạn đến: ${new Date(data.expiresAt).toLocaleString('vi-VN')}`;
+          return data; // Giữ nguyên thời hạn cũ và cho phép tải lại
+        }
+      });
+
+      if (!result.committed) {
+        statusEl.style.color = 'var(--danger)';
+        statusEl.innerText = rejectReason || 'Không thể xác thực Key!';
+      } else {
+        statusEl.style.color = 'var(--success)';
+        statusEl.innerText = successMsg;
+        document.getElementById('keyInputSection').classList.add('hidden');
+        document.getElementById('finalDownloadLink').href = product.fileUrl;
+        document.getElementById('unlockedDownloadBox').classList.remove('hidden');
+      }
+    } catch (err) {
+      statusEl.style.color = 'var(--danger)';
+      statusEl.innerText = 'Lỗi kết nối: ' + err.message;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  // Quản lý sản phẩm trên Shop
+  function addProduct() {
+    const name = document.getElementById('prodName').value.trim();
+    const desc = document.getElementById('prodDesc').value.trim();
+    const fileUrl = document.getElementById('prodFileUrl').value.trim();
+    const videoUrl = document.getElementById('prodVideoUrl').value.trim();
+    const guide = document.getElementById('prodGuide').value.trim();
+
+    if (!name || !fileUrl) return alert("Vui lòng nhập Tên gói và Link file!");
+
+    db.ref('products').push({
+      name, desc, fileUrl, videoUrl, guide, createdAt: Date.now()
+    }).then(() => {
+      alert("Đã đăng file lên cửa hàng!");
+      ['prodName', 'prodDesc', 'prodFileUrl', 'prodVideoUrl', 'prodGuide'].forEach(id => document.getElementById(id).value = '');
+    });
+  }
+
+  function renderAdminProducts() {
+    const container = document.getElementById('adminProductTable');
+    const keys = Object.keys(productsCache);
+    if (keys.length === 0) {
+      container.innerHTML = '<p style="color:var(--muted)">Chưa có sản phẩm nào.</p>';
+      return;
+    }
+    let html = '<table><thead><tr><th>Tên File</th><th>Link</th><th>Xóa</th></tr></thead><tbody>';
+    keys.forEach(id => {
+      const p = productsCache[id];
+      html += `<tr>
+        <td>${escapeHtml(p.name)}</td>
+        <td><a href="${escapeHtml(p.fileUrl)}" target="_blank" style="color:var(--primary)">Mở link</a></td>
+        <td><button class="btn btn-danger" onclick="deleteProduct('${id}')">Xóa</button></td>
+      </tr>`;
+    });
+    container.innerHTML = html + '</tbody></table>';
+  }
+
+  function deleteProduct(id) {
+    if (confirm("Xóa file này khỏi cửa hàng?")) db.ref('products/' + id).remove();
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
+  }
+</script>
+</body>
+</html>
